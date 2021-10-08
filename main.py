@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests 
 import urllib.request
 import json
+from ankiConnectFunctions import invoke, request
 
 main_url = 'https://jlptsensei.com/jlpt-n3-grammar-list/page/5/'
 main_response = requests.get(main_url)
@@ -9,23 +10,6 @@ main_soup = BeautifulSoup(main_response.text, 'html.parser')
 
 deck_name = 'Japanese Grammar'
 note_type = 'Japanese Grammar'
-
-def request(action, **params):
-    return {'action': action, 'params': params, 'version': 6}
-
-# Connecting to AnkiConnect 
-def invoke(action, **params):
-    requestJson = json.dumps(request(action, **params)).encode('utf-8')
-    response = json.load(urllib.request.urlopen(urllib.request.Request('http://localhost:8765', requestJson)))
-    if len(response) != 2:
-        raise Exception('response has an unexpected number of fields')
-    if 'error' not in response:
-        raise Exception('response is missing required error field')
-    if 'result' not in response:
-        raise Exception('response is missing required result field')
-    if response['error'] is not None:
-        print(response['error'])
-    return response['result']
 
 # Gets the html for the list of grammar points 
 grammar_row = main_soup.find_all('tr','jl-row')
