@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests 
 import urllib.request
 import json
-from ankiConnectFunctions import invoke, request
+from ac_functions import invoke, request
 
 main_url = 'https://jlptsensei.com/jlpt-n3-grammar-list/page/5/'
 main_response = requests.get(main_url)
