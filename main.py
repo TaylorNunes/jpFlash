@@ -6,13 +6,17 @@ from ac_functions import invoke, request
 from db_functions import make_db, check_table, make_table, insert_row, get_values
 
 
+conn = make_db()
+cur = conn.cursor()
+table_name = "vocab"
+
 while True:
   command = input("\nEnter a command ('h' for options): ")
 
   if command == "h":
     print("h - print the list of command")
     print("q - quit the program")
-    print("d - make the database")
+    print("d - make the vocab table")
     print("s - scrape the data from jlpt sensei")
     print("c - make cards from the database")
   
@@ -21,13 +25,8 @@ while True:
   
   elif command == "d":
     # Makes the db
-    table_name = "vocab"
-    conn = make_db()
-    cur = conn.cursor()
     if check_table(cur, table_name):
       print("Table exists. Using table {0}".format(table_name))
-      cur.execute("DROP TABLE {0}".format(table_name))
-      make_table(cur, table_name)
     else:
       print("Making table {0}".format(table_name))
       make_table(cur, table_name)
@@ -51,7 +50,8 @@ while True:
         eng_sentence = sub_soup.find_all('div','alert alert-primary')[ex_num].get_text()
 
         insert_row(cur, table_name, ("jlptsensei_g3",jap_sentence,eng_sentence,grammar_point))
-  
+    conn.commit()
+
   # Gets cards from db and puts them into anki via anki connect
   elif command == "c":
     deck_name = 'Japanese Grammar'
