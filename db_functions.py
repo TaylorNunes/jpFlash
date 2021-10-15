@@ -28,7 +28,8 @@ def make_table(cur, name: str):
   translation VARCHAR(255),\
   target_word VARCHAR(255),\
   word_reading VARCHAR(255),\
-  definition VARCHAR(255))\
+  definition VARCHAR(255),\
+  link VARCHAR(255))\
   '''
   cur.execute(qry_create.format(name))
   return
@@ -41,7 +42,7 @@ def insert_row(cur, name: str, values):
     print("There are {0} entries for '{1}'. Skipping insert.".format(result_num,values[3]))
     return
   print("Inserting '{0}' into table".format(values[3]))
-  qry_insert = "INSERT INTO {0}(source,sentence,translation,target_word) values(?, ?, ?, ?)".format(name)
+  qry_insert = "INSERT INTO {0}(source,sentence,translation,target_word,link) values(?, ?, ?, ?,?)".format(name)
   cur.execute(qry_insert, values)
   return
 

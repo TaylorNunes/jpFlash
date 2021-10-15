@@ -76,19 +76,21 @@ while True:
           jap_sentence = sub_soup.find_all('p','m-0 jp')[ex_num].get_text()
           eng_sentence = sub_soup.find_all('div','alert alert-primary')[ex_num].get_text()
 
-          insert_row(cur, table_name, ("jlptsensei_g{0}".format(user_level),jap_sentence,eng_sentence,grammar_point))
+          insert_row(cur, table_name, ("jlptsensei_g{0}".format(user_level),jap_sentence,eng_sentence,grammar_point,sub_url))
     conn.commit()
 
   # Gets cards from db and puts them into anki via anki connect
   elif command == "c":
-    deck_name = 'Japanese Grammar'
+    user_level = input("Enter a level (n1-n5):")
     note_type = 'Japanese Grammar'
-    card_list = get_values(cur, table_name, "jlptsensei_g3")
+    deck_name = 'Japanese Grammar::{0}'.format(user_level)
+    card_list = get_values(cur, table_name, "jlptsensei_g{0}".format(user_level))
     for card in card_list:
         
         jap_sentence_c = card[2]
         eng_sentence_c = card[4]
         grammar_point_c = card[5]
+        link = card[8]
         
         note_id = invoke('findNotes',**{'query':jap_sentence_c})
 
@@ -96,7 +98,7 @@ while True:
             print("Error: There is more than one note with with this sentence. Skipping")
             continue
         
-        note = {'note':{'fields':{'Expression':jap_sentence_c,'Meaning':eng_sentence_c,'Target':grammar_point_c}}}
+        note = {'note':{'fields':{'Expression':jap_sentence_c,'Meaning':eng_sentence_c,'Target':grammar_point_c,'URL':link}}}
 
         if len(note_id)==0:     
             note['note']['deckName'] = deck_name
